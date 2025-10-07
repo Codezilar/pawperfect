@@ -76,15 +76,11 @@ const page = () => {
                 </div>
                 <div className="faq-content">
                   <h2>How does delivery work?</h2>
-                  <p>We use professional pet transport services with climate-controlled vehicles and trained handlers.</p>
-                </div>
-                <div className="faq-content">
-                  <h2>Can I visit the dog before purchase?</h2>
-                  <p>Absolutely! We encourage video calls or in-person visits to meet your future companion.</p>
+                  <p>We use professional pet transport services with climate controlled vehicles and trained handlers.</p>
                 </div>
                 <div className="faq-content">
                   <h2>What payment options do you accept?</h2>
-                  <p>We accept all major credit cards, PayPal, and offer financing options for qualified buyers.</p>
+                  <p>We accept all major Bitcoin, PayPal, and offer financing options for qualified buyers.</p>
                 </div>
                 <div className="faq-content">
                   <h2>Is there a return policy?</h2>

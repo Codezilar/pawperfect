@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react'
 import { FaRegHeart } from "react-icons/fa";
 import { FiShield } from "react-icons/fi";
@@ -14,12 +15,16 @@ const Hero = () => {
             
             <p className='discover'>Discover your perfect companion from our collection of healthy, happy dogs from certified breeders. Safe delivery guaranteed.</p>
             <div className="hero-btns">
-                <button className='browseBtn'>
-                    Browse Our Dogs
-                </button>
-                <button className='specialBTN'>
-                    Talk to a Specialist
-                </button>
+                <Link href={'/dogs'}>
+                    <button className='browseBtn'>
+                        Browse Our Dogs
+                    </button>
+                </Link>
+                <Link href={'/support'}>
+                    <button className='specialBTN'>
+                        Talk to a Specialist
+                    </button>
+                </Link>
             </div>
             <div className="certified">
                 <div className="certified-container">
