@@ -18,20 +18,20 @@ const Nav = () => {
                 <Logo />
                 <ul className={`${hamburga === true ? "isActive" : ""}`}>
                     <Link href={'/'}>
-                        <p>Home</p>
+                        <p onClick={toggleHamburga}>Home</p>
                     </Link>
                     <Link href={'/dogs'}>
-                        <p>Browse Dogs</p>
+                        <p onClick={toggleHamburga}>Browse Dogs</p>
                     </Link>
                     <Link href={'/support'}>
-                        <p>Support</p>
+                        <p onClick={toggleHamburga}>Support</p>
                     </Link>
                     <Link href={'/about'}>
-                        <p>About</p>
+                        <p onClick={toggleHamburga}>About</p>
                     </Link>
                     <SignedOut>
                         <Link href={'/login'}>
-                            <p>Login</p>
+                            <p onClick={toggleHamburga}>Login</p>
                         </Link>
                     </SignedOut>
                 </ul>
