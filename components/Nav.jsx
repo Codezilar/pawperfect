@@ -37,7 +37,6 @@ const Nav = () => {
                 </ul>
                 <Link href={'/dogs'}>
                     <button className='cursor-pointer'>
-                        
                         Find Your Dog
                     </button>
                 </Link>
