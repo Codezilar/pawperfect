@@ -469,6 +469,34 @@ nav{
   font-size: 14px;
 }
 
+/* contact form */
+.reach-out{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-wrap{
+  display: flex;
+  gap: 0.5rem;
+}
+
+.form-wrap input, .form-wrap textarea {
+  width: 100%;
+  border: 2px solid #9d897b;
+  padding: 1rem;
+}
+
+.form-wrap input{
+  height: 2.3rem;
+  border-radius: 8px;
+}
+
+.form-wrap textarea{
+  height: 10rem;
+  border-radius: 8px;
+}
+
 .support-wrapp .required{
   background: linear-gradient(145deg, hsl(35, 45%, 98%), hsl(35, 25%, 88%));
   width: 100%;

@@ -77,10 +77,10 @@ const page = () => {
                   </div>
                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem, soluta? Sunt eaque, ratione corporis non obcaecati earum nostrum laudantium sequi quia cupiditate vero eveniet natus voluptatibus aspernatur odit tempora voluptatum?</p>
                   <div className="btns">
-                    <Link href={'conatct'}>
+                    <Link href={`/payment/${dog.id}`}>
                       <button className='buyDog'>Buy Now</button>
                     </Link>
-                    <Link href={'conatct'}>
+                    <Link href={'/support'}>
                       <button className='ask_btn'>Ask about puppy</button>
                     </Link>
                   </div>

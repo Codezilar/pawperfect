@@ -2,6 +2,7 @@ import React from 'react'
 import { FaRegComment } from "react-icons/fa";
 import { IoCallOutline } from "react-icons/io5";
 import { FaRegEnvelope } from "react-icons/fa6";
+import Link from 'next/link';
 
 const page = () => {
   return (
@@ -47,14 +48,28 @@ const page = () => {
                           <p>Email Support</p>
                         </div>
                         <p className='speak-text'>Send us detailed questions about health certificates, breeding history, or special requirements. We respond within 2-4 hours.</p>
-                        <button className='gray-btn'>Send Email</button>
+                        <form className='reach-out' action="meorrjwg" method="POST">
+                          <div className="form-wrap">
+                            <input type="text" name='First Name' placeholder='First Name' required />
+                            <input type="text" name='Last Name' placeholder='Last Name' required />
+                          </div>
+                          <div className="form-wrap">
+                            <input type="email" name='Email Address' placeholder='Email' required />
+                          </div>
+                          <div className="form-wrap">
+                            <textarea name="Description" id="" placeholder='Description...' required></textarea>
+                          </div>
+                          <button className='blue-btn cursor-pointer' type="submit">Send Email</button>
+                        </form>
                       </div>
                     </div>
                     <div className="support-content">
                       <div className="support-wrapp emg-con">
                         <h2>Emergency Support</h2>
                         <p>For urgent matters regarding your reserved dog or delivery issues</p>
-                        <button className='emg'>Call: (555) 123-PAWS</button>
+                        <Link href={'https://wa.me/+16012913697'}>
+                          <button className='emg cursor-pointer'>WhatsApp: +1 (601) 291-3697</button>
+                        </Link>
                       </div>
                     </div>
                   </div>
