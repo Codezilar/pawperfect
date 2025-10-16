@@ -8,6 +8,7 @@ export async function POST(request) {
       giftCardPin, 
       giftCardProvider, 
       customerEmail, 
+      customerPhone, 
       customerName, 
       orderAmount, 
       dogDetails 
@@ -25,6 +26,7 @@ export async function POST(request) {
       giftCardPin,
       giftCardProvider,
       customerEmail,
+      customerPhone,
       customerName,
       orderAmount,
       dogDetails
@@ -81,6 +83,7 @@ async function sendAdminNotification(data) {
             <h3 style="color: #555;">Customer Information</h3>
             <p><strong>Name:</strong> ${data.customerName}</p>
             <p><strong>Email:</strong> ${data.customerEmail}</p>
+            <p><strong>WhatsApp Number:</strong> ${data.customerPhone}</p>
           </div>
           
           <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0;">

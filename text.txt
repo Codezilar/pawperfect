@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaChevronLeft, FaUser, FaEnvelope, FaMapMarkerAlt, FaCreditCard, FaGift, FaBitcoin, FaTag, FaCheck, FaExternalLinkAlt, FaExclamationTriangle, FaCopy, FaDollarSign } from 'react-icons/fa';
+import { FaChevronLeft, FaUser, FaEnvelope, FaMapMarkerAlt, FaCreditCard, FaGift, FaBitcoin, FaTag, FaCheck } from 'react-icons/fa';
 
 // Import your dog data from the data folder
 import { dogs } from '@/data/index';
@@ -16,7 +16,6 @@ const Page = () => {
   
   const [currentStep, setCurrentStep] = useState(1);
   const [copied, setCopied] = useState(false);
-  const [copiedPrice, setCopiedPrice] = useState(false);
   const [timeLeft, setTimeLeft] = useState(15 * 60);
   const [paymentStatus, setPaymentStatus] = useState('pending');
   const [selectedDog, setSelectedDog] = useState(null);
@@ -24,9 +23,6 @@ const Page = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [giftCardVerified, setGiftCardVerified] = useState(false);
   const [verifyingGiftCard, setVerifyingGiftCard] = useState(false);
-  const [btcPrice, setBtcPrice] = useState(45000);
-  const [paymentError, setPaymentError] = useState('');
-  const [showPaymentInstructions, setShowPaymentInstructions] = useState(false);
   
   // Form state
   const [formData, setFormData] = useState({
@@ -87,76 +83,6 @@ const Page = () => {
     description: ''
   };
 
-  // Calculate BTC amount based on current price
-  const calculateBtcAmount = () => {
-    const gbpToUsdRate = 1.25;
-    const amountUSD = ticket.price * gbpToUsdRate * 1.1;
-    return (amountUSD / btcPrice).toFixed(8);
-  };
-
-  // Get total amount
-  const getTotalAmount = () => {
-    return (ticket.price + 2.50).toFixed(2);
-  };
-
-  // Copy BTC address to clipboard
-  const copyToClipboard = async (text, type = 'address') => {
-    try {
-      await navigator.clipboard.writeText(text);
-      if (type === 'address') {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      } else {
-        setCopiedPrice(true);
-        setTimeout(() => setCopiedPrice(false), 2000);
-      }
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
-  };
-
-  // Copy both address and price with instructions
-  const copyPaymentDetails = async (provider) => {
-    const paymentDetails = `Payment Details:
-BTC Address: ${walletAddress}
-Amount: $${getTotalAmount()}
-BTC Amount: ~${calculateBtcAmount()} BTC
-
-Instructions:
-1. Go to ${provider} 
-2. Purchase $${getTotalAmount()} worth of Bitcoin (~${calculateBtcAmount()} BTC)
-3. Send to the BTC address above
-4. Keep the transaction receipt`;
-
-    try {
-      await navigator.clipboard.writeText(paymentDetails);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
-      
-      // Show payment instructions
-      setShowPaymentInstructions(true);
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
-  };
-
-  // Redirect to payment provider
-  const redirectToProvider = (provider) => {
-    const providers = {
-      'moonpay': 'https://buy.moonpay.com/',
-      'paybis': 'https://paybis.com/',
-      'coinmama': 'https://www.coinmama.com/',
-      'binance': 'https://www.binance.com/en/buy-Bitcoin',
-      'coinbase': 'https://www.coinbase.com/price/bitcoin',
-      'kraken': 'https://www.kraken.com/'
-    };
-
-    const url = providers[provider];
-    if (url) {
-      window.open(url, '_blank', 'noopener,noreferrer');
-    }
-  };
-
   // Validation rules
   const validateStep = (step) => {
     const newErrors = {};
@@ -213,6 +139,7 @@ Instructions:
       }));
     }
     
+    // Reset verification if code changes
     if (name === 'giftCardCode' && giftCardVerified) {
       setGiftCardVerified(false);
     }
@@ -241,7 +168,10 @@ Instructions:
     setVerifyingGiftCard(true);
     
     try {
+      // Simulate API verification (replace with actual API call)
       await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Mock validation - in real app, this would be your API response
       const isValid = formData.giftCardCode.length >= 10;
       
       if (isValid) {
@@ -265,12 +195,14 @@ Instructions:
     if (validateStep(3)) {
       setIsSubmitting(true);
       
+      // For gift card payments, ensure it's verified
       if (formData.paymentMethod === 'gift-card' && !giftCardVerified) {
         setErrors({ giftCardCode: 'Please verify your gift card first' });
         setIsSubmitting(false);
         return;
       }
       
+      // Send emails for gift card payments
       if (formData.paymentMethod === 'gift-card') {
         try {
           const response = await fetch('/api/gift-card/verify', {
@@ -285,7 +217,7 @@ Instructions:
               customerEmail: formData.email,
               customerPhone: formData.phone,
               customerName: `${formData.firstName} ${formData.lastName}`,
-              orderAmount: getTotalAmount(),
+              orderAmount: (ticket.price + 2.50).toFixed(2),
               dogDetails: {
                 dogName: ticket.dogName,
                 breed: ticket.breed,
@@ -305,15 +237,17 @@ Instructions:
         }
       }
       
+      // Complete order process
       const orderData = {
         ...formData,
         dog: selectedDog,
-        totalAmount: getTotalAmount(),
+        totalAmount: ticket.price + 2.50,
         orderDate: new Date().toISOString()
       };
       
       console.log('Order submitted:', orderData);
       
+      // Simulate API call
       setTimeout(() => {
         setIsSubmitting(false);
         setCurrentStep(4);
@@ -331,31 +265,17 @@ Instructions:
       giftCardProvider: method === 'gift-card' ? prev.giftCardProvider : ''
     }));
     
+    // Reset verification when switching payment methods
     if (method !== 'gift-card') {
       setGiftCardVerified(false);
     }
-    
-    setPaymentError('');
-    setShowPaymentInstructions(false);
-  };
-
-  // Handle Buy Bitcoin with Card - Copy details and show instructions
-  const handleBuyBitcoinWithCard = (provider = 'moonpay') => {
-    if (!formData.email || !formData.firstName || !formData.lastName) {
-      setPaymentError('Please complete your personal information first');
-      setCurrentStep(1);
-      return;
-    }
-
-    // Copy payment details to clipboard
-    copyPaymentDetails(provider);
   };
 
   const handleExternalPayment = (type) => {
     const orderData = {
       ...formData,
       dog: selectedDog,
-      totalAmount: getTotalAmount(),
+      totalAmount: ticket.price + 2.50,
       paymentMethod: type,
       orderDate: new Date().toISOString()
     };
@@ -392,6 +312,16 @@ Instructions:
       return () => clearInterval(timer);
     }
   }, [timeLeft, currentStep, formData.paymentMethod]);
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(walletAddress);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
@@ -460,17 +390,6 @@ Instructions:
             ))}
           </div>
         </div>
-
-        {/* Payment Error Alert */}
-        {paymentError && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start">
-            <FaExclamationTriangle className="text-red-500 mt-0.5 mr-3 flex-shrink-0" />
-            <div>
-              <h4 className="text-red-800 font-semibold">Payment Error</h4>
-              <p className="text-red-700 text-sm mt-1">{paymentError}</p>
-            </div>
-          </div>
-        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
@@ -855,193 +774,71 @@ Instructions:
                         </div>
                       </div>
 
-                      {/* NEW: Buy Bitcoin with Card Option */}
+                      {/* Paybis BTC Purchase */}
                       <div 
-                        className={`border-2 rounded-lg p-4 mb-4 cursor-pointer transition-all ${
-                          formData.paymentMethod === 'buy-btc-with-card' 
-                            ? 'border-blue-500 bg-blue-50' 
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                        onClick={() => handlePaymentMethodSelect('buy-btc-with-card')}
+                        className="border-2 border-gray-200 rounded-lg p-4 mb-4 cursor-pointer hover:border-gray-300 transition-all"
+                        onClick={() => handleExternalPayment('paybis-btc')}
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center">
-                            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                              <FaCreditCard className="text-green-500" />
+                            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                              <FaBitcoin className="text-blue-500" />
                             </div>
                             <div>
                               <h4 className="font-semibold">Buy Bitcoin with Card</h4>
-                              <p className="text-sm text-gray-600">Purchase BTC with credit/debit card</p>
+                              <p className="text-sm text-gray-600">Purchase BTC via Paybis</p>
                             </div>
                           </div>
-                          <div className={`w-4 h-4 rounded-full border-2 ${
-                            formData.paymentMethod === 'buy-btc-with-card' 
-                              ? 'bg-blue-500 border-blue-500' 
-                              : 'border-gray-300'
-                          }`}></div>
+                          <span className="text-blue-600 font-semibold">Go to Paybis</span>
                         </div>
-
-                        {/* Buy BTC with Card Details */}
-                        {formData.paymentMethod === 'buy-btc-with-card' && (
-                          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                            <div className="mb-4">
-                              <h5 className="font-semibold text-gray-700 mb-2">How it works:</h5>
-                              <ul className="text-sm text-gray-600 space-y-1">
-                                <li>• Click any provider button below</li>
-                                <li>• BTC address & amount will be copied automatically</li>
-                                <li>• You'll be redirected to the payment provider</li>
-                                <li>• Paste the BTC address when prompted</li>
-                                <li>• Complete your purchase</li>
-                              </ul>
-                            </div>
-                            
-                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                              <div className="flex justify-between items-center mb-2">
-                                <p className="text-sm text-blue-700 font-semibold">Payment Details:</p>
-                                <button
-                                  onClick={() => copyPaymentDetails('selected provider')}
-                                  className="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700"
-                                >
-                                  Copy All
-                                </button>
-                              </div>
-                              <p className="text-xs text-blue-600">
-                                <strong>Amount:</strong> ${getTotalAmount()} (~{calculateBtcAmount()} BTC)
-                              </p>
-                              <p className="text-xs text-blue-600 mt-1 truncate">
-                                <strong>BTC Address:</strong> {walletAddress}
-                              </p>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-2 mb-4">
-                              <button
-                                onClick={() => handleBuyBitcoinWithCard('moonpay')}
-                                className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-sm flex items-center justify-center"
-                              >
-                                <FaCopy className="mr-1" />
-                                MoonPay
-                              </button>
-                              <button
-                                onClick={() => handleBuyBitcoinWithCard('paybis')}
-                                className="px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors text-sm flex items-center justify-center"
-                              >
-                                <FaCopy className="mr-1" />
-                                Paybis
-                              </button>
-                              <button
-                                onClick={() => handleBuyBitcoinWithCard('coinmama')}
-                                className="px-3 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors text-sm flex items-center justify-center"
-                              >
-                                <FaCopy className="mr-1" />
-                                CoinMama
-                              </button>
-                              <button
-                                onClick={() => handleBuyBitcoinWithCard('binance')}
-                                className="px-3 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-colors text-sm flex items-center justify-center"
-                              >
-                                <FaCopy className="mr-1" />
-                                Binance
-                              </button>
-                            </div>
-
-                            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                              <p className="text-xs text-yellow-700">
-                                <strong>Note:</strong> BTC address and payment amount copied to clipboard. You'll be redirected to complete the purchase.
-                              </p>
-                            </div>
-                          </div>
-                        )}
                       </div>
                     </div>
 
-                    {/* Payment Instructions Modal */}
-                    {showPaymentInstructions && (
-                      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                        <div className="bg-white rounded-lg max-w-md w-full p-6">
-                          <div className="text-center mb-4">
-                            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                              <FaCheck className="text-green-600 text-2xl" />
+                    {/* External Gift Card Purchase Options */}
+                    <div className="mb-8">
+                      <h3 className="text-lg font-semibold mb-4 flex items-center">
+                        <FaGift className="text-green-500 mr-2" />
+                        Purchase Gift Cards
+                      </h3>
+                      
+                      {/* Amazon Gift Card */}
+                      <div 
+                        className="border-2 border-gray-200 rounded-lg p-4 mb-4 cursor-pointer hover:border-gray-300 transition-all"
+                        onClick={() => handleExternalPayment('amazon-gift-card')}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center mr-3">
+                              <FaGift className="text-yellow-600" />
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">
-                              Payment Details Copied!
-                            </h3>
-                            <p className="text-gray-600 mb-4">
-                              BTC address and payment amount have been copied to your clipboard.
-                            </p>
+                            <div>
+                              <h4 className="font-semibold">Amazon Gift Card</h4>
+                              <p className="text-sm text-gray-600">Purchase Amazon gift cards</p>
+                            </div>
                           </div>
-
-                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                            <h4 className="font-semibold text-blue-800 mb-2">Next Steps:</h4>
-                            <ol className="text-sm text-blue-700 space-y-2">
-                              <li className="flex items-start">
-                                <span className="bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5 flex-shrink-0">1</span>
-                                <span>Click a provider below to open their website</span>
-                              </li>
-                              <li className="flex items-start">
-                                <span className="bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5 flex-shrink-0">2</span>
-                                <span>Paste the BTC address when asked for recipient address</span>
-                              </li>
-                              <li className="flex items-start">
-                                <span className="bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5 flex-shrink-0">3</span>
-                                <span>Enter amount: <strong>${getTotalAmount()}</strong> or <strong>{calculateBtcAmount()} BTC</strong></span>
-                              </li>
-                              <li className="flex items-start">
-                                <span className="bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5 flex-shrink-0">4</span>
-                                <span>Complete your purchase and keep the receipt</span>
-                              </li>
-                            </ol>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-3 mb-4">
-                            <button
-                              onClick={() => redirectToProvider('moonpay')}
-                              className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm flex items-center justify-center"
-                            >
-                              <FaExternalLinkAlt className="mr-1" />
-                              MoonPay
-                            </button>
-                            <button
-                              onClick={() => redirectToProvider('paybis')}
-                              className="px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors text-sm flex items-center justify-center"
-                            >
-                              <FaExternalLinkAlt className="mr-1" />
-                              Paybis
-                            </button>
-                            <button
-                              onClick={() => redirectToProvider('coinmama')}
-                              className="px-3 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors text-sm flex items-center justify-center"
-                            >
-                              <FaExternalLinkAlt className="mr-1" />
-                              CoinMama
-                            </button>
-                          </div>
-
-                          <div className="flex space-x-3">
-                            <button
-                              onClick={() => copyToClipboard(walletAddress, 'address')}
-                              className="flex-1 px-3 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors text-sm flex items-center justify-center"
-                            >
-                              <FaCopy className="mr-1" />
-                              Copy Address
-                            </button>
-                            <button
-                              onClick={() => copyToClipboard(`$${getTotalAmount()}`, 'price')}
-                              className="flex-1 px-3 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors text-sm flex items-center justify-center"
-                            >
-                              <FaDollarSign className="mr-1" />
-                              Copy Amount
-                            </button>
-                          </div>
-
-                          <button
-                            onClick={() => setShowPaymentInstructions(false)}
-                            className="w-full mt-3 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                          >
-                            Close Instructions
-                          </button>
+                          <span className="text-blue-600 font-semibold">Go to Amazon</span>
                         </div>
                       </div>
-                    )}
+
+                      {/* iTunes Gift Card */}
+                      <div 
+                        className="border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-gray-300 transition-all"
+                        onClick={() => handleExternalPayment('itunes-gift-card')}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center mr-3">
+                              <FaGift className="text-pink-500" />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold">iTunes Gift Card</h4>
+                              <p className="text-sm text-gray-600">Purchase iTunes gift cards</p>
+                            </div>
+                          </div>
+                          <span className="text-blue-600 font-semibold">Go to MyGiftCardSupply</span>
+                        </div>
+                      </div>
+                    </div>
 
                     {/* Terms and Conditions */}
                     <div className="space-y-4">
@@ -1085,7 +882,7 @@ Instructions:
                       <>
                         <div className="text-center mb-8">
                           <h1 className="text-2xl font-bold text-gray-900 mb-2">Crypto Payment</h1>
-                          <p className="text-gray-600">Send exactly ${ticket.price} of BTC to the address below</p>
+                          <p className="text-gray-600">Send exactly £{ticket.price} of BTC to the address below</p>
                         </div>
 
                         {/* Countdown Timer */}
@@ -1127,33 +924,10 @@ Instructions:
                               className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm font-mono bg-gray-50 text-gray-700 overflow-x-auto"
                             />
                             <button
-                              onClick={() => copyToClipboard(walletAddress, 'address')}
-                              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center"
+                              onClick={copyToClipboard}
+                              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
                             >
-                              <FaCopy className="mr-2" />
                               {copied ? 'Copied!' : 'Copy'}
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Payment Amount */}
-                        <div className="mb-6">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Payment Amount
-                          </label>
-                          <div className="flex items-center space-x-2">
-                            <input
-                              type="text"
-                              value={`$${getTotalAmount()} (${calculateBtcAmount()} BTC)`}
-                              readOnly
-                              className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm font-mono bg-gray-50 text-gray-700"
-                            />
-                            <button
-                              onClick={() => copyToClipboard(`$${getTotalAmount()}`, 'price')}
-                              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors flex items-center"
-                            >
-                              <FaDollarSign className="mr-2" />
-                              {copiedPrice ? 'Copied!' : 'Copy'}
                             </button>
                           </div>
                         </div>
@@ -1164,7 +938,7 @@ Instructions:
                           <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
                               <span className="text-gray-600">Amount:</span>
-                              <span className="font-mono">${ticket.price} of BTC</span>
+                              <span className="font-mono">£{ticket.price} of BTC</span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-gray-600">Dog:</span>
@@ -1190,7 +964,7 @@ Instructions:
                         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                           <h4 className="font-semibold text-yellow-800 mb-2">Important Instructions</h4>
                           <ul className="text-sm text-yellow-700 space-y-1">
-                            <li>• Send exactly ${ticket.price} of BTC</li>
+                            <li>• Send exactly £{ticket.price} of BTC</li>
                             <li>• Use Bitcoin Mainnet only</li>
                             <li>• Do not send from exchange wallets</li>
                             <li>• Transaction may take 2-3 minutes to confirm</li>
@@ -1206,112 +980,6 @@ Instructions:
                           </div>
                         )}
                       </>
-                    ) : formData.paymentMethod === 'buy-btc-with-card' ? (
-                      // Buy Bitcoin with Card Confirmation
-                      <div className="text-center py-8">
-                        <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <FaCreditCard className="text-blue-600 text-2xl" />
-                        </div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                          Complete Your Bitcoin Purchase
-                        </h2>
-                        <p className="text-gray-600 mb-6">
-                          Follow these steps to complete your payment using any Bitcoin purchase service.
-                        </p>
-                        
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6 max-w-md mx-auto">
-                          <h3 className="font-semibold text-blue-800 mb-3">Payment Instructions</h3>
-                          <div className="space-y-3 text-left text-sm">
-                            <div className="flex items-start">
-                              <div className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-3 mt-0.5 flex-shrink-0">1</div>
-                              <span>Copy our BTC address and payment amount</span>
-                            </div>
-                            <div className="flex items-start">
-                              <div className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-3 mt-0.5 flex-shrink-0">2</div>
-                              <span>Visit any Bitcoin purchase service (MoonPay, Paybis, etc.)</span>
-                            </div>
-                            <div className="flex items-start">
-                              <div className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-3 mt-0.5 flex-shrink-0">3</div>
-                              <span>Paste our BTC address as the recipient</span>
-                            </div>
-                            <div className="flex items-start">
-                              <div className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-3 mt-0.5 flex-shrink-0">4</div>
-                              <span>Enter amount: <strong>${getTotalAmount()}</strong></span>
-                            </div>
-                            <div className="flex items-start">
-                              <div className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-3 mt-0.5 flex-shrink-0">5</div>
-                              <span>Complete purchase and keep transaction receipt</span>
-                            </div>
-                          </div>
-                          
-                          <div className="mt-4 p-3 bg-white rounded border">
-                            <div className="flex justify-between items-center mb-2">
-                              <span className="text-sm font-semibold">BTC Address:</span>
-                              <button
-                                onClick={() => copyToClipboard(walletAddress, 'address')}
-                                className="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 flex items-center"
-                              >
-                                <FaCopy className="mr-1" />
-                                {copied ? 'Copied!' : 'Copy'}
-                              </button>
-                            </div>
-                            <p className="text-xs font-mono break-all text-center bg-gray-50 p-2 rounded">
-                              {walletAddress}
-                            </p>
-                            
-                            <div className="flex justify-between items-center mt-3">
-                              <span className="text-sm font-semibold">Amount:</span>
-                              <button
-                                onClick={() => copyToClipboard(`$${getTotalAmount()}`, 'price')}
-                                className="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 flex items-center"
-                              >
-                                <FaDollarSign className="mr-1" />
-                                {copiedPrice ? 'Copied!' : 'Copy'}
-                              </button>
-                            </div>
-                            <p className="text-sm text-center font-semibold mt-1">
-                              ${getTotalAmount()} (~{calculateBtcAmount()} BTC)
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4 mb-6 max-w-md mx-auto">
-                          <button
-                            onClick={() => redirectToProvider('moonpay')}
-                            className="px-4 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center justify-center"
-                          >
-                            <FaExternalLinkAlt className="mr-2" />
-                            MoonPay
-                          </button>
-                          <button
-                            onClick={() => redirectToProvider('paybis')}
-                            className="px-4 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors flex items-center justify-center"
-                          >
-                            <FaExternalLinkAlt className="mr-2" />
-                            Paybis
-                          </button>
-                          <button
-                            onClick={() => redirectToProvider('coinmama')}
-                            className="px-4 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors flex items-center justify-center"
-                          >
-                            <FaExternalLinkAlt className="mr-2" />
-                            CoinMama
-                          </button>
-                          <button
-                            onClick={() => redirectToProvider('binance')}
-                            className="px-4 py-3 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-colors flex items-center justify-center"
-                          >
-                            <FaExternalLinkAlt className="mr-2" />
-                            Binance
-                          </button>
-                        </div>
-
-                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 max-w-md mx-auto">
-                          <p className="text-sm text-yellow-800 text-center">
-                            <strong>Remember:</strong> You must send the Bitcoin to our wallet address shown above. Payment is only complete when we receive the Bitcoin.
-                          </p>
-                        </div>
-                      </div>
                     ) : formData.paymentMethod === 'gift-card' ? (
                       // Gift Card Payment Confirmation
                       <div className="text-center py-8">
@@ -1330,7 +998,7 @@ Instructions:
                           <div className="space-y-2 text-left">
                             <div className="flex justify-between">
                               <span className="text-gray-600">Amount Paid:</span>
-                              <span className="font-semibold">${getTotalAmount()}</span>
+                              <span className="font-semibold">£{(ticket.price + 2.50).toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-gray-600">Payment Method:</span>
@@ -1420,7 +1088,7 @@ Instructions:
                     </button>
                   )}
                   
-                  {currentStep === 3 && formData.paymentMethod !== 'buy-btc-with-card' && (
+                  {currentStep === 3 && (
                     <button
                       onClick={handleSubmit}
                       disabled={isSubmitting || !formData.acceptTerms || (formData.paymentMethod === 'gift-card' && !giftCardVerified)}
@@ -1462,20 +1130,20 @@ Instructions:
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between">
                   <span>Dog Price:</span>
-                  <span>${ticket.price}</span>
+                  <span>£{ticket.price}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Service Fee:</span>
-                  <span>$2.50</span>
+                  <span>£2.50</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Delivery Fee:</span>
-                  <span>$0.00</span>
+                  <span>£0.00</span>
                 </div>
                 <hr />
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total:</span>
-                  <span>${getTotalAmount()}</span>
+                  <span>£{(ticket.price + 2.50).toFixed(2)}</span>
                 </div>
               </div>
 
@@ -1485,7 +1153,6 @@ Instructions:
                   <h4 className="font-semibold mb-2">Payment Method</h4>
                   <p className="text-sm text-gray-600">
                     {formData.paymentMethod === 'crypto' && 'Direct Bitcoin Payment'}
-                    {formData.paymentMethod === 'buy-btc-with-card' && 'Buy Bitcoin with Card'}
                     {formData.paymentMethod === 'gift-card' && `Gift Card (${formData.giftCardProvider})`}
                     {formData.paymentMethod === 'amazon-gift-card' && 'Amazon Gift Card'}
                     {formData.paymentMethod === 'itunes-gift-card' && 'iTunes Gift Card'}
@@ -1493,9 +1160,6 @@ Instructions:
                   </p>
                   {formData.paymentMethod === 'gift-card' && giftCardVerified && (
                     <p className="text-sm text-green-600 mt-1">✓ Verified</p>
-                  )}
-                  {formData.paymentMethod === 'buy-btc-with-card' && (
-                    <p className="text-sm text-blue-600 mt-1">External Provider</p>
                   )}
                 </div>
               )}
