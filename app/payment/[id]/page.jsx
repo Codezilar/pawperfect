@@ -1297,13 +1297,6 @@ Instructions:
                             <FaExternalLinkAlt className="mr-2" />
                             CoinMama
                           </button>
-                          <button
-                            onClick={() => redirectToProvider('binance')}
-                            className="px-4 py-3 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-colors flex items-center justify-center"
-                          >
-                            <FaExternalLinkAlt className="mr-2" />
-                            Binance
-                          </button>
                         </div>
 
                         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 max-w-md mx-auto">
