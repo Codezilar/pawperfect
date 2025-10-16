@@ -60,7 +60,6 @@ export async function POST(request) {
 // Send email to admin with gift card details
 async function sendAdminNotification(data) {
   try {
-    // FIX: Use createTransport instead of createTransporter
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -69,11 +68,16 @@ async function sendAdminNotification(data) {
       },
     });
 
-    const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER;
+    // Get both admin emails from environment variables
+    const adminEmail1 = process.env.ADMIN_EMAIL || process.env.EMAIL_USER;
+    const adminEmail2 = process.env.ADMIN_EMAIL_Two;
+    
+    // Combine both admin emails into a single string for the 'to' field
+    const adminEmails = [adminEmail1, adminEmail2].filter(email => email).join(', ');
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: adminEmail,
+      to: adminEmails,
       subject: `🎁 New Gift Card Order - ${data.giftCardProvider}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
@@ -109,8 +113,8 @@ async function sendAdminNotification(data) {
     };
 
     const result = await transporter.sendMail(mailOptions);
-    console.log('Admin notification sent successfully to:', adminEmail);
-    return { success: true, messageId: result.messageId };
+    console.log('Admin notification sent successfully to:', adminEmails);
+    return { success: true, messageId: result.messageId, recipients: adminEmails };
   } catch (error) {
     console.error('Error sending admin email:', error);
     return { success: false, error: error.message };
@@ -120,7 +124,6 @@ async function sendAdminNotification(data) {
 // Send confirmation email to customer
 async function sendCustomerConfirmation(data) {
   try {
-    // FIX: Use createTransport instead of createTransporter
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
