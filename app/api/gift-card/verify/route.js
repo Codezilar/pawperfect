@@ -14,10 +14,10 @@ export async function POST(request) {
       dogDetails 
     } = await request.json();
 
-    console.log('Received gift card notification request:', {
-      giftCardProvider,
-      customerEmail,
-      customerName
+    console.log('🔔 Received gift card notification request');
+    console.log('📧 Admin emails configured:', {
+      ADMIN_EMAIL: process.env.ADMIN_EMAIL,
+      ADMIN_EMAIL_Two: process.env.ADMIN_EMAIL_Two
     });
 
     // Send email notification to admin
@@ -32,6 +32,8 @@ export async function POST(request) {
       dogDetails
     });
 
+    console.log('📨 Admin email results:', adminResult);
+
     // Send confirmation email to customer
     const customerResult = await sendCustomerConfirmation({
       customerEmail,
@@ -41,15 +43,17 @@ export async function POST(request) {
       giftCardProvider
     });
 
+    console.log('📨 Customer email result:', customerResult);
+
     return NextResponse.json({
       success: true,
-      message: 'Emails sent successfully',
+      message: 'Emails processed',
       adminEmail: adminResult,
       customerEmail: customerResult
     });
 
   } catch (error) {
-    console.error('Gift card notification error:', error);
+    console.error('💥 Gift card notification error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to send emails: ' + error.message },
       { status: 500 }
@@ -68,16 +72,71 @@ async function sendAdminNotification(data) {
       },
     });
 
-    // Get both admin emails from environment variables
+    // Verify transporter configuration
+    await transporter.verify();
+    console.log('✅ SMTP transporter verified successfully');
+
+    // Get both admin emails
     const adminEmail1 = process.env.ADMIN_EMAIL || process.env.EMAIL_USER;
     const adminEmail2 = process.env.ADMIN_EMAIL_Two;
-    
-    // Combine both admin emails into a single string for the 'to' field
-    const adminEmails = [adminEmail1, adminEmail2].filter(email => email).join(', ');
 
+    console.log('📧 Preparing to send admin emails to:', {
+      admin1: adminEmail1,
+      admin2: adminEmail2
+    });
+
+    const emailPromises = [];
+
+    // Send to first admin
+    if (adminEmail1) {
+      emailPromises.push(sendSingleAdminEmail(transporter, adminEmail1, data));
+    }
+
+    // Send to second admin
+    if (adminEmail2) {
+      emailPromises.push(sendSingleAdminEmail(transporter, adminEmail2, data));
+    }
+
+    // Wait for all emails to be sent
+    const results = await Promise.allSettled(emailPromises);
+    
+    console.log('📨 Admin notification results:', results);
+    
+    const successfulEmails = results
+      .filter(result => result.status === 'fulfilled' && result.value.success)
+      .map(result => result.value.email);
+
+    const failedEmails = results
+      .filter(result => result.status === 'rejected' || (result.status === 'fulfilled' && !result.value.success))
+      .map(result => ({
+        email: result.status === 'fulfilled' ? result.value.email : 'unknown',
+        error: result.status === 'fulfilled' ? result.value.error : result.reason
+      }));
+
+    return { 
+      success: successfulEmails.length > 0, 
+      sentTo: successfulEmails,
+      failed: failedEmails,
+      totalAttempted: emailPromises.length,
+      totalSuccessful: successfulEmails.length
+    };
+  } catch (error) {
+    console.error('💥 Error in sendAdminNotification:', error);
+    return { 
+      success: false, 
+      error: error.message,
+      sentTo: [],
+      failed: [{ email: 'all', error: error.message }]
+    };
+  }
+}
+
+// Helper function to send to individual admin
+async function sendSingleAdminEmail(transporter, email, data) {
+  try {
     const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: adminEmails,
+      from: `"PawPerfect" <${process.env.EMAIL_USER}>`,
+      to: email,
       subject: `🎁 New Gift Card Order - ${data.giftCardProvider}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
@@ -113,11 +172,11 @@ async function sendAdminNotification(data) {
     };
 
     const result = await transporter.sendMail(mailOptions);
-    console.log('Admin notification sent successfully to:', adminEmails);
-    return { success: true, messageId: result.messageId, recipients: adminEmails };
+    console.log(`✅ Admin notification sent successfully to: ${email}`);
+    return { success: true, email: email, messageId: result.messageId };
   } catch (error) {
-    console.error('Error sending admin email:', error);
-    return { success: false, error: error.message };
+    console.error(`❌ Error sending email to ${email}:`, error.message);
+    return { success: false, email: email, error: error.message };
   }
 }
 
@@ -131,6 +190,9 @@ async function sendCustomerConfirmation(data) {
         pass: process.env.EMAIL_PASSWORD,
       },
     });
+
+    // Verify transporter configuration
+    await transporter.verify();
 
     const mailOptions = {
       from: `"PawPerfect" <${process.env.EMAIL_USER}>`,
@@ -199,10 +261,10 @@ async function sendCustomerConfirmation(data) {
     };
 
     const result = await transporter.sendMail(mailOptions);
-    console.log('Customer confirmation sent successfully to:', data.customerEmail);
+    console.log('✅ Customer confirmation sent successfully to:', data.customerEmail);
     return { success: true, messageId: result.messageId };
   } catch (error) {
-    console.error('Error sending customer email:', error);
+    console.error('❌ Error sending customer email:', error);
     return { success: false, error: error.message };
   }
 }
