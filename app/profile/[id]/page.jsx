@@ -75,7 +75,7 @@ const page = () => {
                     </div>
                     <Image src={'/world.webp'} height={200} width={200} alt='j' />
                   </div>
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem, soluta? Sunt eaque, ratione corporis non obcaecati earum nostrum laudantium sequi quia cupiditate vero eveniet natus voluptatibus aspernatur odit tempora voluptatum?</p>
+                  <p>{dog.desc}</p>
                   <div className="btns">
                     <Link href={`/payment/${dog.id}`}>
                       <button className='buyDog'>Buy Now</button>
