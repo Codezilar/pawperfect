@@ -7,7 +7,7 @@ export const dogs = [
     desc: "Fun-loving Frenchie with cute bat ears and charm.",
     breed: "French Bulldog",
     age: "3 Months",
-    location: "California",
+    location: "",
     price: "650",
     images: [
         "/french41.jpeg",
@@ -25,7 +25,7 @@ export const dogs = [
     desc: "Energetic Yorkie with a silky coat and big personality.",
     breed: "Yorkie",
     age: "8 weeks",
-    location: "California",
+    location: "",
     price: "750",
     images: [
         "/yokies4.jpeg",
@@ -42,7 +42,7 @@ export const dogs = [
     desc: "Chill and affectionate Bulldog with a gentle nature.",
     breed: "English Bulldog",
     age: "3 Months",
-    location: "California",
+    location: "",
     price: "800",
     images: [
         "/bulldog2.jpeg",
@@ -60,7 +60,7 @@ export const dogs = [
     desc: "Playful and smart Maltipoo, hypoallergenic and trainable.",
     breed: "Maltipoo",
     age: "7 weeks",
-    location: "California",
+    location: "",
     price: "550",
     images: [
         "/multipoo2.jpeg",
@@ -77,7 +77,7 @@ export const dogs = [
     desc: "Fun-loving Frenchie with cute bat ears and charm.",
     breed: "French Bulldog",
     age: "3 Months",
-    location: "California",
+    location: "",
     price: "600",
     images: [
         "/french2.jpeg",
@@ -94,7 +94,7 @@ export const dogs = [
     desc: "Tiny, elegant Teacup Poodle ideal for small spaces.",
     breed: "Teacup Poodle",
     age: "4 Months",
-    location: "California",
+    location: "",
     price: "700",
     images: [
         "/teacup2.jpeg",
@@ -110,7 +110,7 @@ export const dogs = [
     desc: "Fluffy and bold Pomeranian with a playful spirit.",
     breed: "Pomeranian",
     age: "5 Months",
-    location: "California",
+    location: "",
     price: "500",
     images: [
         "/pomeranian1.jpeg",
@@ -127,7 +127,7 @@ export const dogs = [
     desc: "Sweet Shih Tzu with a soft coat and calm vibe.",
     breed: "Shih Tzu",
     age: "3 Months",
-    location: "California",
+    location: "",
     price: "450",
     images: [
         "/shitzu3.jpeg",
@@ -143,7 +143,7 @@ export const dogs = [
     desc: "Gentle Maltese with a silky coat, loves to cuddle.",
     breed: "Maltese",
     age: "3 Months",
-    location: "California",
+    location: "",
     price: "550",
     images: [
         "/maltese2.jpeg",
@@ -161,7 +161,7 @@ export const dogs = [
     desc: "Comical and cuddly Pug, perfect for any home.",
     breed: "Pug",
     age: "3 Months",
-    location: "California",
+    location: "",
     price: "400",
     images: [
         "/pug2.jpeg",
@@ -178,7 +178,7 @@ export const dogs = [
     desc: "Gentle Maltese with a silky coat, loves to cuddle.",
     breed: "Maltese",
     age: "3 Months",
-    location: "California",
+    location: "",
     price: "500",
     images: [
         "/matese21.jpeg",
@@ -193,7 +193,7 @@ export const dogs = [
     desc: "Fun-loving Frenchie with cute bat ears and charm.",
     breed: "French Bulldog",
     age: "3 Months",
-    location: "California",
+    location: "",
     price: "650",
     images: [
         "/french21.jpeg",
@@ -208,7 +208,7 @@ export const dogs = [
     desc: "Fun-loving Frenchie with cute bat ears and charm.",
     breed: "French Bulldog",
     age: "2 Months",
-    location: "California",
+    location: "",
     price: "680",
     images: [
         "/french31.jpeg",
@@ -223,7 +223,7 @@ export const dogs = [
     desc: "Highly intelligent, loyal, and courageous young dog.",
     breed: "German Shepherd",
     age: "4 Months",
-    location: "California",
+    location: "",
     price: "350",
     images: [
         "/german2.jpeg",
@@ -239,7 +239,7 @@ export const dogs = [
     desc: "Highly intelligent, loyal, and courageous young dog.",
     breed: "German Shepherd Husky Mix",
     age: "5 Months",
-    location: "California",
+    location: "",
     price: "400",
     images: [
         "/hermanhrse2.jpeg",
@@ -254,7 +254,7 @@ export const dogs = [
     desc: "Highly intelligent, loyal, and courageous young dog.",
     breed: "German Shepherd",
     age: "5 Months",
-    location: "California",
+    location: "",
     price: "380",
     images: [
         "/german21.jpeg",
@@ -270,7 +270,7 @@ export const dogs = [
     desc: "Fluffy and bold Pomeranian with a playful spirit.",
     breed: "Pomeranian",
     age: "3 Months",
-    location: "California",
+    location: "",
     price: "480",
     images: [
         "/pomeranian11.jpeg",
@@ -286,7 +286,7 @@ export const dogs = [
     desc: "Comical and cuddly Pug, perfect for any home.",
     breed: "Pug",
     age: "3 Months",
-    location: "California",
+    location: "",
     price: "420",
     images: [
         "/pug11.jpeg",
@@ -304,7 +304,7 @@ export const dogs = [
     desc: "Tiny but fiercely loyal and full of energy.",
     breed: "Chihuahua",
     age: "3 Months",
-    location: "California",
+    location: "",
     price: "350",
     images: [
         "/chihuahua1.jpeg",
@@ -321,7 +321,7 @@ export const dogs = [
     desc: "Muscular, loyal, energetic dog with a strong, loving personality.",
     breed: "Pitbull",
     age: "5 Months",
-    location: "California",
+    location: "",
     price: "300",
     images: [
         "/pitbull1.jpeg",
