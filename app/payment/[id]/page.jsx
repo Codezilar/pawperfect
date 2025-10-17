@@ -1496,7 +1496,6 @@ Instructions:
               <div className="border-t pt-4">
                 <h4 className="font-semibold mb-2">{ticket.application}</h4>
                 <p className="text-sm text-gray-600 mb-1">{ticket.breed}</p>
-                <p className="text-sm text-gray-600">{ticket.location}</p>
               </div>
             </div>
           </div>
