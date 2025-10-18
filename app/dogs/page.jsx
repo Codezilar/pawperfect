@@ -57,6 +57,7 @@ const page = () => {
                                     <p className='sweet'>{dog.desc  }</p>
                                     <div className='gold'>
                                         <span><LuCalendar /> <p>{dog.breed}</p><LuDot /><p>{dog.age}</p></span>
+                                        <span><IoLocationOutline /> <p>{dog.location}</p></span>
                                         <span className='dolas'>
                                             <LuDollarSign /> 
                                             <h1>${dog.price}</h1>
