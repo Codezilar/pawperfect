@@ -8,7 +8,7 @@ export const dogs = [
     breed: "French Bulldog",
     age: "3 Months",
     location: "",
-    price: "650",
+    price: "250",
     images: [
         "/french41.jpeg",
         "/french42.jpeg",
@@ -26,7 +26,7 @@ export const dogs = [
     breed: "Yorkie",
     age: "8 weeks",
     location: "",
-    price: "750",
+    price: "250",
     images: [
         "/yokies4.jpeg",
         "/yokies1.jpeg",
@@ -43,7 +43,7 @@ export const dogs = [
     breed: "English Bulldog",
     age: "3 Months",
     location: "",
-    price: "800",
+    price: "250",
     images: [
         "/bulldog2.jpeg",
         "/bulldog1.jpeg",
@@ -61,7 +61,7 @@ export const dogs = [
     breed: "Maltipoo",
     age: "7 weeks",
     location: "",
-    price: "550",
+    price: "220",
     images: [
         "/multipoo2.jpeg",
         "/multipoo1.jpeg",
@@ -78,7 +78,7 @@ export const dogs = [
     breed: "French Bulldog",
     age: "3 Months",
     location: "",
-    price: "600",
+    price: "230",
     images: [
         "/french2.jpeg",
         "/french1.jpeg",
@@ -95,7 +95,7 @@ export const dogs = [
     breed: "Teacup Poodle",
     age: "4 Months",
     location: "",
-    price: "700",
+    price: "250",
     images: [
         "/teacup2.jpeg",
         "/teacup1.jpeg",
@@ -111,7 +111,7 @@ export const dogs = [
     breed: "Pomeranian",
     age: "5 Months",
     location: "",
-    price: "500",
+    price: "200",
     images: [
         "/pomeranian1.jpeg",
         "/pomeranian2.jpeg",
@@ -128,7 +128,7 @@ export const dogs = [
     breed: "Shih Tzu",
     age: "3 Months",
     location: "",
-    price: "450",
+    price: "180",
     images: [
         "/shitzu3.jpeg",
         "/shitzu1.jpeg",
@@ -144,7 +144,7 @@ export const dogs = [
     breed: "Maltese",
     age: "3 Months",
     location: "",
-    price: "550",
+    price: "220",
     images: [
         "/maltese2.jpeg",
         "/maltese1.jpeg",
@@ -162,7 +162,7 @@ export const dogs = [
     breed: "Pug",
     age: "3 Months",
     location: "",
-    price: "400",
+    price: "160",
     images: [
         "/pug2.jpeg",
         "/pug1.jpeg",
@@ -179,7 +179,7 @@ export const dogs = [
     breed: "Maltese",
     age: "3 Months",
     location: "",
-    price: "500",
+    price: "200",
     images: [
         "/matese21.jpeg",
         "/matese23.jpeg",
@@ -194,7 +194,7 @@ export const dogs = [
     breed: "French Bulldog",
     age: "3 Months",
     location: "",
-    price: "650",
+    price: "250",
     images: [
         "/french21.jpeg",
         "/french22.jpeg",
@@ -209,7 +209,7 @@ export const dogs = [
     breed: "French Bulldog",
     age: "2 Months",
     location: "",
-    price: "680",
+    price: "240",
     images: [
         "/french31.jpeg",
         "/french32.jpeg",
@@ -224,7 +224,7 @@ export const dogs = [
     breed: "German Shepherd",
     age: "4 Months",
     location: "",
-    price: "350",
+    price: "180",
     images: [
         "/german2.jpeg",
         "/german1.jpeg",
@@ -240,7 +240,7 @@ export const dogs = [
     breed: "German Shepherd Husky Mix",
     age: "5 Months",
     location: "",
-    price: "400",
+    price: "190",
     images: [
         "/hermanhrse2.jpeg",
         "/hermanhrse1.jpeg",
@@ -255,7 +255,7 @@ export const dogs = [
     breed: "German Shepherd",
     age: "5 Months",
     location: "",
-    price: "380",
+    price: "200",
     images: [
         "/german21.jpeg",
         "/german22.jpeg",
@@ -271,7 +271,7 @@ export const dogs = [
     breed: "Pomeranian",
     age: "3 Months",
     location: "",
-    price: "480",
+    price: "190",
     images: [
         "/pomeranian11.jpeg",
         "/pomeranian12.jpeg",
@@ -287,7 +287,7 @@ export const dogs = [
     breed: "Pug",
     age: "3 Months",
     location: "",
-    price: "420",
+    price: "170",
     images: [
         "/pug11.jpeg",
         "/pug12.jpeg",
@@ -305,7 +305,7 @@ export const dogs = [
     breed: "Chihuahua",
     age: "3 Months",
     location: "",
-    price: "350",
+    price: "170",
     images: [
         "/chihuahua1.jpeg",
         "/chihuahua2.jpeg",
@@ -322,7 +322,7 @@ export const dogs = [
     breed: "Pitbull",
     age: "5 Months",
     location: "",
-    price: "300",
+    price: "180",
     images: [
         "/pitbull1.jpeg",
         "/pitbull2.jpeg",
